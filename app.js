@@ -17,7 +17,7 @@ var app = express();
 
 // Set up mongoose connection
 var mongoose = require('mongoose');
-var dev_db_url = 'mongodb://cooluser:coolpassword@ds119748.mlab.com:19748/local_library';
+var dev_db_url = 'mongodb+srv://user:user12345678@cluster0.wt7he.mongodb.net/local_library?retryWrites=true';
 var mongoDB = process.env.MONGODB_URI || dev_db_url;
 mongoose.connect(mongoDB);
 mongoose.Promise = global.Promise;
@@ -30,7 +30,8 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var User = require('./models/user');
 var flash = require('express-flash');
-var MongoStore = require('connect-mongo')(session);
+var MongoStore = require('connect-mongo');
+//var MongoStore = require('connect-mongo')(session);
 
 // Configure the local strategy for use by Passport.
 passport.use(
@@ -87,9 +88,9 @@ app.use(
     secret: 'local-library-session-secret',
     resave: false,
     saveUninitialized: true,
-    store: new MongoStore({
-      url: mongoDB,
-      ttl: 7 * 24 * 60 * 60 // 7 days. 14 Default.
+    store: MongoStore.create({
+      mongoUrl: mongoDB
+      //ttl: 7 * 24 * 60 * 60 // 7 days. 14 Default.
     })
     // cookie: { secure: true }
   })
